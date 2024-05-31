@@ -1,0 +1,23 @@
+version: '3.1'
+
+services:
+  db:
+    image: postgres:16.3
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example
+    ports:
+      - 5432:5432
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  flyway:
+    image: flyway/flyway:10.13-alpine
+    depends_on:
+      - db
+    command: -url=jdbc:postgresql://db:5432/postgres -user=postgres -password=example migrate
+    volumes:
+      - ./src/main/resources/db/migration:/flyway/sql
+
+volumes:
+  db-data:
