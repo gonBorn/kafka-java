@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd $(dirname ${BASH_SOURCE[0]})/..
+
+docker-compose up connect1
+docker-compose down --remove-orphans

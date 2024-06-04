@@ -11,7 +11,7 @@ public class StudentProducer {
     public static void main(String[] args) {
         // Kafka producer configuration settings
         Properties props = new Properties();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
@@ -37,7 +37,7 @@ public class StudentProducer {
             String studentJson = gson.toJson(student);
 
             // Send JSON to Kafka topic
-            ProducerRecord<String, String> record = new ProducerRecord<>("quickstart-events", studentJson);
+            ProducerRecord<String, String> record = new ProducerRecord<>("students", studentJson);
             producer.send(record);
 
             System.out.println("Student data sent to Kafka: " + studentJson);

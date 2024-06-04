@@ -1,0 +1,13 @@
+auth:
+  type: DISABLED
+kafka:
+  clusters:
+    - bootstrapServers: host.docker.internal:29092,host.docker.internal:39092
+      metrics:
+        port: 9997
+        type: JMX
+      name: local
+      properties: {}
+      readOnly: false
+rbac:
+  roles: []

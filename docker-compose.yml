@@ -19,5 +19,80 @@ services:
     volumes:
       - ./src/main/resources/db/migration:/flyway/sql
 
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.2
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 22181:2181
+
+  broker:
+    image: confluentinc/cp-kafka:7.5.2
+    container_name: broker
+    depends_on:
+      - zookeeper
+    ports:
+      - 29092:29092
+      - 39092:39092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:9092,PLAINTEXT_HOST://localhost:29092,PLAINTEXT_EXTERNAL_DOCKER_HOST://host.docker.internal:39092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,PLAINTEXT_EXTERNAL_DOCKER_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+#      This is required when you are running with a single-node cluster.
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    depends_on:
+      - broker
+    ports:
+      - 8086:8080
+    environment:
+      DYNAMIC_CONFIG_ENABLED: 'true'
+    volumes:
+      - ./config/kafka-ui-config.yml:/etc/kafkaui/dynamic_config.yaml
+
+  connect1:
+    image: confluentinc/cp-kafka-connect:7.6.1
+#    depends_on:
+#      - db
+#      - broker
+#      - kafka-ui
+    ports:
+      - 8083:8083
+    volumes:
+      - ./config/connect-jdbc-sink.properties:/etc/kafka/connect-jdbc-sink.properties
+      - ./connectors:/etc/kafka-connect/jars/
+    command:
+      - bash
+      - -c
+      - |
+        echo "Installing JDBC driver..."
+        confluent-hub install --no-prompt confluentinc/kafka-connect-jdbc:latest
+        echo "Starting Kafka Connect..."
+        /etc/confluent/docker/run
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: broker:9092
+      CONNECT_GROUP_ID: my-connect-group
+      CONNECT_CONFIG_STORAGE_TOPIC: connect-configs
+      CONNECT_OFFSET_STORAGE_TOPIC: connect-offset
+      CONNECT_STATUS_STORAGE_TOPIC: connect-status
+      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_REST_ADVERTISED_HOST_NAME: connect1
+#      Error while attempting to create/find topic(s)
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: "1"
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: "1"
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: "1"
+      CONNECT_PLUGIN_PATH: '/usr/share/java,/etc/kafka-connect/jars'
+
 volumes:
   db-data:
