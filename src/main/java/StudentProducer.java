@@ -52,7 +52,15 @@ public class StudentProducer {
             ProducerRecord<String, Student> record = new ProducerRecord<>(TOPIC, studentId, student);
 //            ProducerRecord<String, Struct> record = new ProducerRecord<>(TOPIC, studentId, struct);
 //            ProducerRecord<String, String> record = new ProducerRecord<>("students", studentId, studentJson);
-            producer.send(record);
+            producer.send(record, (metadata, exception) -> {
+                if (exception != null) {
+                    exception.printStackTrace();
+                } else {
+                    System.out.println("Sent record to topic " + metadata.topic() +
+                            " partition " + metadata.partition() +
+                            " at offset " + metadata.offset());
+                }
+            });
 
             System.out.println("Student data sent to Kafka: " + studentJson);
 

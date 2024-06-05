@@ -12,7 +12,7 @@
     "pk.mode": "record_key",
     "pk.fields": "order_id",
     "delete.enabled": "true",
-    "key.converter": "org.apache.kafka.connect.converters.IntegerConverter",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
     "value.converter": "io.confluent.connect.json.JsonSchemaConverter",
     "value.converter.schema.registry.url": "http://kafka-schema-registry:8081",
     "topics": "orders",

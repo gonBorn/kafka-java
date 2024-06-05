@@ -1,8 +1,8 @@
 CREATE TABLE orders
 (
-    order_id    integer PRIMARY KEY,
+    order_id    varchar PRIMARY KEY,
     customer_id integer,
-    order_date  date
+    order_date  varchar
 );
 --     PARTITION BY RANGE (order_date);
 
