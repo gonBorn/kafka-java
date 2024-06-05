@@ -145,3 +145,11 @@ https://mvnrepository.com/artifact/io.confluent/kafka-connect-json-schema-conver
 
 converter
 https://docs.confluent.io/platform/current/schema-registry/connect.html#json-schema
+
+注册schema
+curl -X GET http://localhost:8081/schemas/ids/1
+[2024-06-05 13:49:24,419] INFO 192.168.160.1 - - [05/Jun/2024:13:49:24 +0000] "GET /schemas/ids/1 HTTP/1.1" 404 51 "-" "curl/8.6.0" 25 (io.confluent.rest-utils.requests)
+[2024-06-05 13:50:59,557] INFO Registering new schema: subject customized_students-value, version null, id null, type JSON, schema size 288 (io.confluent.kafka.schemaregistry.rest.resources.SubjectVersionsResource)
+
+
+bin/kafka-topics.sh --delete --topic orders --bootstrap-server localhost:29092

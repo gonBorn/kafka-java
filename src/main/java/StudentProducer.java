@@ -15,17 +15,9 @@ public class StudentProducer {
     private static final String TOPIC = "customized_students";
 
     public static void main(String[] args) {
-        // Kafka producer configuration settings
-        Properties props = new Properties();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaJsonSchemaSerializer.class.getName());
-        props.put("value.converter", "org.apache.kafka.connect.json.JsonSchemaConverter");
-        props.put("schema.registry.url", "http://localhost:8081");
-
         // Create a Kafka producer
 //        KafkaProducer<String, String> producer = new KafkaProducer<>(props);
-        KafkaProducer<String, Student> producer = new KafkaProducer<>(props);
+        KafkaProducer<String, Student> producer = new KafkaProducer<>(Utils.getProducerProperties());
 
         // Scanner for user input
         Scanner scanner = new Scanner(System.in);

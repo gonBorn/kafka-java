@@ -1,0 +1,23 @@
+{
+  "name": "JdbcSinkMultiTasksConnector",
+  "config": {
+    "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
+    "tasks.max": "1",
+    "table.name.format": "${topic}",
+    "connection.url": "jdbc:postgresql://db:5432/postgres",
+    "connection.user": "postgres",
+    "connection.password": "example",
+    "auto.create": "false",
+    "batch.size": 3000,
+    "pk.mode": "record_key",
+    "pk.fields": "order_id",
+    "delete.enabled": "true",
+    "key.converter": "org.apache.kafka.connect.converters.IntegerConverter",
+    "value.converter": "io.confluent.connect.json.JsonSchemaConverter",
+    "value.converter.schema.registry.url": "http://kafka-schema-registry:8081",
+    "topics": "orders",
+    "transforms": "RenameField",
+    "transforms.RenameField.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
+    "transforms.RenameField.renames": "customerId:customer_id,orderDate:order_date"
+  }
+}
