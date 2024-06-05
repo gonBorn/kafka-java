@@ -47,6 +47,22 @@ services:
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
       KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
       KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
+#    volumes:
+#      - ./kafka-data:/var/lib/kafka/data
+
+  kafka-schema-registry:
+    image: confluentinc/cp-schema-registry:7.3.2
+    hostname: kafka-schema-registry
+    container_name: kafka-schema-registry
+    ports:
+      - "8081:8081"
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://broker:9092
+      SCHEMA_REGISTRY_HOST_NAME: kafka-schema-registry
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+    depends_on:
+      - zookeeper
+      - broker
 
   kafka-ui:
     container_name: kafka-ui
@@ -62,21 +78,24 @@ services:
 
   connect1:
     image: confluentinc/cp-kafka-connect:7.6.1
-#    depends_on:
-#      - db
-#      - broker
-#      - kafka-ui
+    depends_on:
+      - db
+      - zookeeper
+      - broker
+      - kafka-schema-registry
+      - kafka-ui
     ports:
       - 8083:8083
     volumes:
       - ./config/connect-jdbc-sink.properties:/etc/kafka/connect-jdbc-sink.properties
+      - ./config/connect-jdbc-sink.json:/etc/kafka/connect-jdbc-sink.json
       - ./connectors:/etc/kafka-connect/jars/
     command:
       - bash
       - -c
       - |
         echo "Installing JDBC driver..."
-        confluent-hub install --no-prompt confluentinc/kafka-connect-jdbc:latest
+        confluent connect plugin install confluentinc/kafka-connect-jdbc:10.7.0
         echo "Starting Kafka Connect..."
         /etc/confluent/docker/run
     environment:
@@ -93,6 +112,8 @@ services:
       CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: "1"
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: "1"
       CONNECT_PLUGIN_PATH: '/usr/share/java,/etc/kafka-connect/jars'
+      CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE: false
+      CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: false
 
 volumes:
   db-data:

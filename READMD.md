@@ -66,3 +66,82 @@ Importance: medium
 
 # Required Kafka Connect configurations
 https://docs.confluent.io/platform/current/installation/docker/config-reference.html
+
+## Install the JDBC sink connector
+https://docs.confluent.io/kafka-connectors/jdbc/current/sink-connector/overview.html#install-the-jdbc-sink-connector
+
+manually install
+https://docs.confluent.io/platform/current/connect/userguide.html#connect-installing-plugins
+
+```bash
+curl -X POST -H "Accept:application/json" -H "Content-Type: application/json" \
+--data @/etc/kafka/connect-jdbc-sink.json http://localhost:8083/connectors
+```
+
+或
+
+```bash
+curl -X POST -H "Accept:application/json" -H "Content-Type: application/json" \
+--data @./config/connect-jdbc-sink.json http://localhost:8083/connectors
+```
+
+replica
+partition
+分区数要靠下游的节点数来决定
+
+pk.mode 是 Confluent JDBC Sink Connector 的一个配置选项，
+用于指定如何处理 Kafka 记录的键（key）以及如何将其映射到数据库表的主键。
+如果你希望 Kafka topic 中的数据被自动创建表并写入数据库，你需要指定 pk.mode。  
+"pk.mode": "record_key"，key将被用作数据库表的主键。
+如果key是一个结构体（Struct），那么它的所有字段都将被用作复合主键
+
+如果你希望生成的表有主键，但 Kafka 记录的键不适合作为主键，
+你可以使用 pk.fields 选项来指定一个或多个字段作为主键
+
+Assignment received from leader connect-1-7e2db73f-e396-4b15-8b7e-7267ad091d7a for group my-connect-group for generation 1. The group has 1 members, 0 of which are static. (kafka.coordinator.group.GroupCoordinator)
+
+```bash
+curl -X GET http://localhost:8083/connectors 
+curl http://localhost:8083/connectors/JdbcSinkConnector/status
+curl -X DELETE http://localhost:8083/connectors/JdbcSinkConnector
+```
+
+"topics.regex": ".*"或    "topics": "students"必填一个
+
+delete.enabled=false：这个配置项表示是否允许删除操作。当设置为false时，Sink Connector不会处理Kafka中的删除操作（即，Kafka中的null值记录）。这意味着，如果Kafka中的某个记录的值为null，那么这个记录不会被Sink Connector处理。 
+
+因此，这个错误消息的意思是，由于你的配置设置了delete.enabled=false和pk.mode=record_key，所以你需要确保Kafka中的每个记录都有一个非空的结构体（Struct）值和非空的结构体（Struct）模式。换句话说，你不能发送值为null或者没有结构体模式的记录到Kafka中，否则Sink Connector将无法处理这些记录。
+
+自动创建表的功能依赖于Kafka记录的schema。如果Kafka记录没有schema（例如，你正在使用schemaless的数据格式，如JSON），那么Connector可能无法正确地创建表。
+
+converter
+https://www.confluent.io/blog/kafka-connect-deep-dive-converters-serialization-explained/
+
+Common converters include:
+
+Avro
+io.confluent.connect.avro.AvroConverter
+
+Protobuf
+io.confluent.connect.protobuf.ProtobufConverter
+
+String
+org.apache.kafka.connect.storage.StringConverter
+
+JSON
+org.apache.kafka.connect.json.JsonConverter
+
+JSON Schema
+io.confluent.connect.json.JsonSchemaConverter
+
+ByteArray
+org.apache.kafka.connect.converters.ByteArrayConverter
+
+json-schema-serializer-and-deserializer
+https://docs.confluent.io/platform/current/schema-registry/fundamentals/serdes-develop/serdes-json.html#json-schema-serializer-and-deserializer-for-sr-on-product
+
+mvn 地址
+https://mvnrepository.com/artifact/io.confluent/kafka-connect-json-schema-converter
+
+converter
+https://docs.confluent.io/platform/current/schema-registry/connect.html#json-schema

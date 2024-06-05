@@ -1,0 +1,20 @@
+{
+  "name": "JdbcSinkConnector",
+  "config": {
+    "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
+    "tasks.max": "1",
+    "table.name.format": "kafka_${topic}",
+    "connection.url": "jdbc:postgresql://db:5432/postgres",
+    "connection.user": "postgres",
+    "connection.password": "example",
+    "auto.create": "true",
+    "batch.size": 3000,
+    "pk.mode": "record_key",
+    "pk.fields": "id",
+    "topics.regex": "customized_.*",
+    "delete.enabled": "true",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "io.confluent.connect.json.JsonSchemaConverter",
+    "value.converter.schema.registry.url": "http://kafka-schema-registry:8081"
+  }
+}
