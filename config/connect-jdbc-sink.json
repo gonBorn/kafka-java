@@ -13,6 +13,7 @@
     "pk.fields": "id",
     "topics.regex": "customized_.*",
     "delete.enabled": "true",
+    "insert.mode": "upsert",
     "key.converter": "org.apache.kafka.connect.storage.StringConverter",
     "value.converter": "io.confluent.connect.json.JsonSchemaConverter",
     "value.converter.schema.registry.url": "http://kafka-schema-registry:8081"
