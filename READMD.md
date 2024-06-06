@@ -15,6 +15,9 @@ https://www.confluent.io/product/connectors/?_ga=2.68501202.25982689.1717039609-
 ## Kafka quick start
 download https://www.apache.org/dyn/closer.cgi?path=/kafka/3.7.0/kafka_2.13-3.7.0.tgz
 
+### REA kafka cli
+https://gist.git.realestate.com.au/yang-hu/05c1ce4a5ca1ec649cb8df8bfe455946
+
 ```bash
 tar -xzf kafka_2.13-3.7.0.tgz
 cd kafka_2.13-3.7.0
@@ -110,11 +113,13 @@ curl -X DELETE http://localhost:8083/connectors/JdbcSinkConnector
 
 delete.enabled=false：这个配置项表示是否允许删除操作。当设置为false时，Sink Connector不会处理Kafka中的删除操作（即，Kafka中的null值记录）。这意味着，如果Kafka中的某个记录的值为null，那么这个记录不会被Sink Connector处理。 
 
-因此，这个错误消息的意思是，由于你的配置设置了delete.enabled=false和pk.mode=record_key，所以你需要确保Kafka中的每个记录都有一个非空的结构体（Struct）值和非空的结构体（Struct）模式。换句话说，你不能发送值为null或者没有结构体模式的记录到Kafka中，否则Sink Connector将无法处理这些记录。
+"delete.enabled": "true"配置项允许connector处理Kafka中的删除记录（也就是说，当Kafka中的一条记录的值部分为null时，connector会删除数据库中对应的记录）
+
+由于你的配置设置了delete.enabled=false和pk.mode=record_key，所以你需要确保Kafka中的每个记录都有一个非空的结构体（Struct）值和非空的结构体（Struct）模式。换句话说，你不能发送值为null或者没有结构体模式的记录到Kafka中，否则Sink Connector将无法处理这些记录。
 
 自动创建表的功能依赖于Kafka记录的schema。如果Kafka记录没有schema（例如，你正在使用schemaless的数据格式，如JSON），那么Connector可能无法正确地创建表。
 
-converter
+### converter
 https://www.confluent.io/blog/kafka-connect-deep-dive-converters-serialization-explained/
 
 Common converters include:
@@ -146,10 +151,13 @@ https://mvnrepository.com/artifact/io.confluent/kafka-connect-json-schema-conver
 converter
 https://docs.confluent.io/platform/current/schema-registry/connect.html#json-schema
 
-注册schema
+### 注册schema
 curl -X GET http://localhost:8081/schemas/ids/1
 [2024-06-05 13:49:24,419] INFO 192.168.160.1 - - [05/Jun/2024:13:49:24 +0000] "GET /schemas/ids/1 HTTP/1.1" 404 51 "-" "curl/8.6.0" 25 (io.confluent.rest-utils.requests)
 [2024-06-05 13:50:59,557] INFO Registering new schema: subject customized_students-value, version null, id null, type JSON, schema size 288 (io.confluent.kafka.schemaregistry.rest.resources.SubjectVersionsResource)
 
-
-bin/kafka-topics.sh --delete --topic orders --bootstrap-server localhost:29092
+### connect dlq
+https://docs.confluent.io/platform/current/connect/index.html#dead-letter-queues
+"errors.tolerance": "all",
+"errors.deadletterqueue.topic.name": "dlq-gcs-sink-01",
+"errors.deadletterqueue.context.headers.enable": true

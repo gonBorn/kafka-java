@@ -93,8 +93,6 @@ services:
       - bash
       - -c
       - |
-        echo "Installing JDBC driver..."
-        confluent connect plugin install confluentinc/kafka-connect-jdbc:10.7.0
         echo "Starting Kafka Connect..."
         /etc/confluent/docker/run
     environment:
