@@ -16,6 +16,15 @@
     "insert.mode": "upsert",
     "key.converter": "org.apache.kafka.connect.storage.StringConverter",
     "value.converter": "io.confluent.connect.json.JsonSchemaConverter",
-    "value.converter.schema.registry.url": "http://kafka-schema-registry:8081"
+    "value.converter.schema.registry.url": "http://kafka-schema-registry:8081",
+    "transforms": "purchaseFilter,purchaseFilter2",
+    "transforms.purchaseFilter.type": "io.confluent.connect.transforms.Filter$Value",
+    "transforms.purchaseFilter.filter.condition": "$[?(@.name == 'purchase')]",
+    "transforms.purchaseFilter.filter.type": "include",
+    "transforms.purchaseFilter.missing.or.null.behavior": "exclude",
+    "transforms.purchaseFilter2.type": "io.confluent.connect.transforms.Filter$Value",
+    "transforms.purchaseFilter2.filter.condition": "$[?(@.studentId == '1')]",
+    "transforms.purchaseFilter2.filter.type": "include",
+    "transforms.purchaseFilter2.missing.or.null.behavior": "exclude"
   }
 }

@@ -73,6 +73,10 @@ https://docs.confluent.io/platform/current/installation/docker/config-reference.
 ## Install the JDBC sink connector
 https://docs.confluent.io/kafka-connectors/jdbc/current/sink-connector/overview.html#install-the-jdbc-sink-connector
 
+## AWS Lambda sink connector
+https://docs.confluent.io/kafka-connectors/aws-lambda/current/overview.html
+https://www.confluent.io/hub/confluentinc/kafka-connect-aws-lambda?_ga=2.26271741.1937555616.1722783142-1247891401.1693981423&_gl=1*c92a0m*_gcl_au*OTc2MTEyNzMuMTcyMjQwNzAyNw..*_ga*MTI0Nzg5MTQwMS4xNjkzOTgxNDIz*_ga_D2D3EGKSGD*MTcyMjc4MzE0MS43Ni4xLjE3MjI3ODMyODcuMzguMC4w
+
 manually install
 https://docs.confluent.io/platform/current/connect/userguide.html#connect-installing-plugins
 

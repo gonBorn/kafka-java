@@ -111,6 +111,10 @@ services:
       CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE: false
       CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: false
       CONNECT_PLUGIN_PATH: '/usr/share/java,/etc/kafka-connect/jars'
+#      AWS_ACCESS_KEY_ID:
+#      AWS_SECRET_ACCESS_KEY:
+#      AWS_SESSION_TOKEN:
+#      AWS_DEFAULT_REGION:
 
 volumes:
   db-data:
