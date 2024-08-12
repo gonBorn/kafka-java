@@ -165,3 +165,46 @@ https://docs.confluent.io/platform/current/connect/index.html#dead-letter-queues
 "errors.tolerance": "all",
 "errors.deadletterqueue.topic.name": "dlq-gcs-sink-01",
 "errors.deadletterqueue.context.headers.enable": true
+
+### SMT
+Initially, we used an SMT from `confluentinc` which is not a free plugin so instead, we found a new free SMT that can work
+
+Reference link:
+
+**old SMT:**
+https://www.confluent.io/hub/confluentinc/connect-transforms
+
+**configuration of old SMT:**
+https://docs.confluent.io/platform/current/connect/transforms/filter-confluent.html
+
+**new SMT(free):**
+https://www.confluent.io/hub/jcustenborder/kafka-connect-transform-common
+
+**configuration of new SMT:**
+https://jcustenborder.github.io/kafka-connect-documentation/projects/kafka-connect-transform-common/transformations/PatternFilter.html
+
+**Git of new free SMT**
+https://github.com/jcustenborder/kafka-connect-transform-common/blob/master/src/te[…]tenborder/kafka/connect/transform/common/PatternFilterTest.java
+
+**config for free SMT**
+```
+    "transforms": "purchaseFilter",
+    "transforms.purchaseFilter.type": "com.github.jcustenborder.kafka.connect.transform.common.PatternFilter$Value",
+    "transforms.purchaseFilter.pattern": "^filter$",
+    "transforms.purchaseFilter.fields": "name"
+```
+
+**config for 2 SMTs**
+```
+    "transforms": "purchaseFilter,purchaseFilter2",
+    "transforms.purchaseFilter.type": "io.confluent.connect.transforms.Filter$Value",
+    "transforms.purchaseFilter.filter.condition": "$[?(@.name == 'purchase')]",
+    "transforms.purchaseFilter.filter.type": "include",
+    "transforms.purchaseFilter.missing.or.null.behavior": "exclude",
+    "transforms.purchaseFilter2.type": "io.confluent.connect.transforms.Filter$Value",
+    "transforms.purchaseFilter2.filter.condition": "$[?(@.studentId == '1')]",
+    "transforms.purchaseFilter2.filter.type": "include",
+    "transforms.purchaseFilter2.missing.or.null.behavior": "exclude"
+```
+
+多个SMT会按顺序执行：purchaseFilter,purchaseFilter2
