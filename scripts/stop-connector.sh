@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 
 # 获取所有的connectors
 connectors=$(curl -s -X GET http://localhost:8083/connectors | jq -r '.[]')
