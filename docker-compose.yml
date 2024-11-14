@@ -94,6 +94,7 @@ services:
       - -c
       - |
         echo "Starting Kafka Connect..."
+        confluent-hub install --no-prompt --component-dir /usr/share/java/kafka llofberg/kafka-connect-aws-lambda:1.0.0
         /etc/confluent/docker/run
     environment:
       CONNECT_BOOTSTRAP_SERVERS: broker:9092
