@@ -15,9 +15,6 @@ https://www.confluent.io/product/connectors/?_ga=2.68501202.25982689.1717039609-
 ## Kafka quick start
 download https://www.apache.org/dyn/closer.cgi?path=/kafka/3.7.0/kafka_2.13-3.7.0.tgz
 
-### REA kafka cli
-https://gist.git.realestate.com.au/yang-hu/05c1ce4a5ca1ec649cb8df8bfe455946
-
 ```bash
 tar -xzf kafka_2.13-3.7.0.tgz
 cd kafka_2.13-3.7.0
