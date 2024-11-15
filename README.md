@@ -242,6 +242,9 @@ work
 
 Reference link:
 
+You can download the latest Apache kafka connect transforms jar from the below link:
+https://mvnrepository.com/artifact/org.apache.kafka/connect-transforms/3.9.0
+
 **old SMT:**
 https://www.confluent.io/hub/confluentinc/connect-transforms
 
